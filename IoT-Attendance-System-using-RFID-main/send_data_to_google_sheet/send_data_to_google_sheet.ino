@@ -1,5 +1,11 @@
-#include <SPI.h>
+// MFRC522 - Version: 1.4.10
 #include <MFRC522.h>
+#include <MFRC522Extended.h>
+#include <deprecated.h>
+#include <require_cpp11.h>
+
+#include <SPI.h>
+// #include <MFRC522.h>
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
 #include <ESP8266WiFiMulti.h>
@@ -11,9 +17,9 @@
 const uint8_t fingerprint[20] = {0x4a, 0x2e, 0xb2, 0xa8, 0x29, 0x12, 0x9a, 0xca, 0xac, 0xe1, 0xe0, 0xf4, 0xa0, 0x6c, 0x74, 0x4b, 0x4b, 0x7d, 0x5b, 0xab};
 // 4a 2e b2 a8 29 12 9a ca ac e1 e0 f4 a0 6c 74 4b 4b 7d 5b ab
 
-#define RST_PIN  D3     // Configurable, see typical pin layout above
-#define SS_PIN   D4     // Configurable, see typical pin layout above
-#define BUZZER   D2     // Configurable, see typical pin layout above
+#define RST_PIN  0     // Configurable, see typical pin layout above
+#define SS_PIN   2     // Configurable, see typical pin layout above
+#define BUZZER   4     // Configurable, see typical pin layout above
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Instance of the class
 MFRC522::MIFARE_Key key;  
@@ -51,7 +57,7 @@ void setup()
   WiFi.mode(WIFI_STA);
   
   /* Put your WIFI Name and Password here */
-  WiFiMulti.addAP("iot", "project1234");
+  WiFiMulti.addAP("Galaxy J883BF", "polkmn(18");
 
   /* Set BUZZER as OUTPUT */
   pinMode(BUZZER, OUTPUT);
