@@ -14,8 +14,8 @@
 #include <WiFiClientSecureBearSSL.h>
 
 // Fingerprint for demo URL, expires on June 2, 2021, needs to be updated well before this date
-const uint8_t fingerprint[20] = {0x4a, 0x2e, 0xb2, 0xa8, 0x29, 0x12, 0x9a, 0xca, 0xac, 0xe1, 0xe0, 0xf4, 0xa0, 0x6c, 0x74, 0x4b, 0x4b, 0x7d, 0x5b, 0xab};
-// 4a 2e b2 a8 29 12 9a ca ac e1 e0 f4 a0 6c 74 4b 4b 7d 5b ab
+const uint8_t fingerprint[20] = {0x09, 0x1e, 0x68, 0x9f, 0xbd, 0x40, 0x4b, 0x47, 0x8d, 0xac, 0xbe, 0xfe, 0xef, 0x35, 0xd6, 0x52, 0xc1, 0xa0, 0xec, 0x9f};
+// 09 1E 68 9F BD 40 4B 47 8D AC BE FE EF 35 D6 52 C1 A0 EC 9F
 
 #define RST_PIN  0     // Configurable, see typical pin layout above
 #define SS_PIN   2     // Configurable, see typical pin layout above
@@ -35,7 +35,7 @@ byte bufferLen = 18;
 byte readBlockData[18];
 
 String data2;
-const String data1 = "https://script.google.com/macros/s/AKfycbwi5Lioy_QXdIw0Snh3x_9bsLDtOu2-nxgSBgGmj9k8DPO1j_g0-cM3N9PIgehlKRZN/exec?name=";
+const String data1 = "https://docs.google.com/spreadsheets/d/12qc8QZOm8NbEDrMEQO1MUCYIdAit89v0wR1OssLhlAg/exec?name=";
 
 void setup() 
 {
