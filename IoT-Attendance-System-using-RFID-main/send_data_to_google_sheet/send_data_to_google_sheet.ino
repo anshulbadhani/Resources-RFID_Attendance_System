@@ -1,86 +1,90 @@
-// MFRC522 - Version: 1.4.10
-#include <MFRC522.h>
-#include <MFRC522Extended.h>
-#include <deprecated.h>
-#include <require_cpp11.h>
-
 #include <SPI.h>
-// #include <MFRC522.h>
+#include <MFRC522.h>
 #include <Arduino.h>
 #include <ESP8266WiFi.h>
-#include <ESP8266WiFiMulti.h>
 #include <ESP8266HTTPClient.h>
 #include <WiFiClient.h>
 #include <WiFiClientSecureBearSSL.h>
-
-// Fingerprint for demo URL, expires on June 2, 2021, needs to be updated well before this date
-const uint8_t fingerprint[20] = {0x09, 0x1e, 0x68, 0x9f, 0xbd, 0x40, 0x4b, 0x47, 0x8d, 0xac, 0xbe, 0xfe, 0xef, 0x35, 0xd6, 0x52, 0xc1, 0xa0, 0xec, 0x9f};
-// 09 1E 68 9F BD 40 4B 47 8D AC BE FE EF 35 D6 52 C1 A0 EC 9F
-
-#define RST_PIN  0     // Configurable, see typical pin layout above
-#define SS_PIN   2     // Configurable, see typical pin layout above
-#define BUZZER   4     // Configurable, see typical pin layout above
-
-MFRC522 mfrc522(SS_PIN, RST_PIN);  // Instance of the class
+//-----------------------------------------
+#define RST_PIN  D3
+#define SS_PIN   D4
+#define BUZZER   D2
+//-----------------------------------------
+MFRC522 mfrc522(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;  
-ESP8266WiFiMulti WiFiMulti;
 MFRC522::StatusCode status;      
-
+//-----------------------------------------
 /* Be aware of Sector Trailer Blocks */
 int blockNum = 2;  
-
 /* Create another array to read data from Block */
 /* Legthn of buffer should be 2 Bytes more than the size of Block (16 Bytes) */
 byte bufferLen = 18;
 byte readBlockData[18];
+//-----------------------------------------
+String card_holder_name;
+const String sheet_url = "ENTER_YOUR_SHEET_URL";
+//-----------------------------------------
+// Fingerprint for demo URL, expires on ‎Monday, ‎May ‎2, ‎2022 7:20:58 AM, needs to be updated well before this date
+const uint8_t fingerprint[20] = {0x9a, 0x87, 0x9b, 0x82, 0xe9, 0x19, 0x7e, 0x63, 0x8a, 0xdb, 0x67, 0xed, 0xa7, 0x09, 0xd9, 0x2f, 0x30, 0xde, 0xe7, 0x3c};
+//9a 87 9b 82 e9 19 7e 63 8a db 67 ed a7 09 d9 2f 30 de e7 3c
+//-----------------------------------------
+#define WIFI_SSID "ENTER_YOUR_WIFI_SSID"
+#define WIFI_PASSWORD "ENTER_YOUR_WIFI_PASSWORD"
+//-----------------------------------------
 
-String data2;
-const String data1 = "https://script.google.com/macros/s/AKfycby1iCVP5iPzEPZXHcmubB0CgehK1UR6JHjDcB8_DqKZq0rShpurz37NM8Xn0lF3_btKyw/exec?name=";
 
-void setup() 
+
+
+/****************************************************************************************************
+ * setup() function
+ ****************************************************************************************************/
+void setup()
 {
+  //--------------------------------------------------
   /* Initialize serial communications with the PC */
   Serial.begin(9600);
-  // Serial.setDebugOutput(true);
-
+  //Serial.setDebugOutput(true);
+  //--------------------------------------------------
+  //WiFi Connectivity
   Serial.println();
-  Serial.println();
-  Serial.println();
-
-  for (uint8_t t = 4; t > 0; t--) 
-  {
-    Serial.printf("[SETUP] WAIT %d...\n", t);
-    Serial.flush();
-    delay(1000);
+  Serial.print("Connecting to AP");
+  WiFi.begin(WIFI_SSID, WIFI_PASSWORD);
+  while (WiFi.status() != WL_CONNECTED){
+    Serial.print(".");
+    delay(200);
   }
-
-  WiFi.mode(WIFI_STA);
-  
-  /* Put your WIFI Name and Password here */
-  WiFiMulti.addAP("Galaxy J883BF", "polkmn(18");
-
+  Serial.println("");
+  Serial.println("WiFi connected.");
+  Serial.println("IP address: ");
+  Serial.println(WiFi.localIP());
+  Serial.println();
+  //--------------------------------------------------
   /* Set BUZZER as OUTPUT */
   pinMode(BUZZER, OUTPUT);
+  //--------------------------------------------------
   /* Initialize SPI bus */
   SPI.begin();
+  //--------------------------------------------------
 }
 
-void loop()
+
+
+
+/****************************************************************************************************
+ * loop() function
+ ****************************************************************************************************/
+ void loop()
 {
+  //--------------------------------------------------
   /* Initialize MFRC522 Module */
   mfrc522.PCD_Init();
   /* Look for new cards */
   /* Reset the loop if no new card is present on RC522 Reader */
-  if ( ! mfrc522.PICC_IsNewCardPresent())
-  {
-    return;
-  }
+  if ( ! mfrc522.PICC_IsNewCardPresent()) {return;}
   /* Select one of the cards */
-  if ( ! mfrc522.PICC_ReadCardSerial()) 
-  {
-    return;
-  }
+  if ( ! mfrc522.PICC_ReadCardSerial()) {return;}
   /* Read data from the same block */
+  //--------------------------------------------------
   Serial.println();
   Serial.println(F("Reading last data from RFID..."));
   ReadDataFromBlock(blockNum, readBlockData);
@@ -97,6 +101,7 @@ void loop()
     Serial.write(readBlockData[j]);
   }
   Serial.println();
+  //--------------------------------------------------
   digitalWrite(BUZZER, HIGH);
   delay(200);
   digitalWrite(BUZZER, LOW);
@@ -104,82 +109,94 @@ void loop()
   digitalWrite(BUZZER, HIGH);
   delay(200);
   digitalWrite(BUZZER, LOW);
+  //--------------------------------------------------
   
-  // wait for WiFi connection
-  if ((WiFiMulti.run() == WL_CONNECTED)) 
-  {
+  //MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+  if (WiFi.status() == WL_CONNECTED) {
+    //-------------------------------------------------------------------------------
     std::unique_ptr<BearSSL::WiFiClientSecure>client(new BearSSL::WiFiClientSecure);
-
+    //-------------------------------------------------------------------------------
     client->setFingerprint(fingerprint);
-    // Or, if you happy to ignore the SSL certificate, then use the following line instead:
+    // Or, if you want to ignore the SSL certificate
+    //then use the following line instead:
     // client->setInsecure();
-
-    data2 = data1 + String((char*)readBlockData);
-    data2.trim();
-    Serial.println(data2);
-    
+    //-----------------------------------------------------------------
+    card_holder_name = sheet_url + String((char*)readBlockData);
+    card_holder_name.trim();
+    Serial.println(card_holder_name);
+    //-----------------------------------------------------------------
     HTTPClient https;
     Serial.print(F("[HTTPS] begin...\n"));
-    if (https.begin(*client, (String)data2))
-    {  
+    //-----------------------------------------------------------------
+
+    //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    if (https.begin(*client, (String)card_holder_name)){
+      //-----------------------------------------------------------------
       // HTTP
       Serial.print(F("[HTTPS] GET...\n"));
       // start connection and send HTTP header
       int httpCode = https.GET();
-    
+      //-----------------------------------------------------------------
       // httpCode will be negative on error
-      if (httpCode > 0) 
-      {
+      if (httpCode > 0) {
         // HTTP header has been send and Server response header has been handled
         Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
         // file found at server
       }
+      //-----------------------------------------------------------------
       else 
-      {
-        Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());
-      }
+      {Serial.printf("[HTTPS] GET... failed, error: %s\n", https.errorToString(httpCode).c_str());}
+      //-----------------------------------------------------------------
       https.end();
       delay(1000);
-    } 
-    else 
-    {
+    }
+    //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
+    else {
       Serial.printf("[HTTPS} Unable to connect\n");
     }
+    //NNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN
   }
+  //MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
 }
 
+
+
+
+/****************************************************************************************************
+ * ReadDataFromBlock() function
+ ****************************************************************************************************/
 void ReadDataFromBlock(int blockNum, byte readBlockData[]) 
 { 
+  //----------------------------------------------------------------------------
   /* Prepare the ksy for authentication */
   /* All keys are set to FFFFFFFFFFFFh at chip delivery from the factory */
-  for (byte i = 0; i < 6; i++)
-  {
+  for (byte i = 0; i < 6; i++) {
     key.keyByte[i] = 0xFF;
   }
+  //----------------------------------------------------------------------------
   /* Authenticating the desired data block for Read access using Key A */
   status = mfrc522.PCD_Authenticate(MFRC522::PICC_CMD_MF_AUTH_KEY_A, blockNum, &key, &(mfrc522.uid));
-
-  if (status != MFRC522::STATUS_OK)
-  {
+  //----------------------------------------------------------------------------s
+  if (status != MFRC522::STATUS_OK){
      Serial.print("Authentication failed for Read: ");
      Serial.println(mfrc522.GetStatusCodeName(status));
      return;
   }
-  else
-  {
+  //----------------------------------------------------------------------------
+  else {
     Serial.println("Authentication success");
   }
-
+  //----------------------------------------------------------------------------
   /* Reading data from the Block */
   status = mfrc522.MIFARE_Read(blockNum, readBlockData, &bufferLen);
-  if (status != MFRC522::STATUS_OK)
-  {
+  if (status != MFRC522::STATUS_OK) {
     Serial.print("Reading failed: ");
     Serial.println(mfrc522.GetStatusCodeName(status));
     return;
   }
-  else
-  {
+  //----------------------------------------------------------------------------
+  else {
     Serial.println("Block was read successfully");  
   }
+  //----------------------------------------------------------------------------
 }
