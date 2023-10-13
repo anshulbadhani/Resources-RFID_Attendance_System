@@ -22,10 +22,10 @@ byte bufferLen = 18;
 byte readBlockData[18];
 //-----------------------------------------
 String card_holder_name;
-const String sheet_url = "ENTER_YOUR_SHEET_URL";
+const String sheet_url = "https://script.google.com/macros/s/AKfycby1iCVP5iPzEPZXHcmubB0CgehK1UR6JHjDcB8_DqKZq0rShpurz37NM8Xn0lF3_btKyw/exec?name=";
 //-----------------------------------------
 // Fingerprint for demo URL, expires on ‎Monday, ‎May ‎2, ‎2022 7:20:58 AM, needs to be updated well before this date
-const uint8_t fingerprint[20] = {0x9a, 0x87, 0x9b, 0x82, 0xe9, 0x19, 0x7e, 0x63, 0x8a, 0xdb, 0x67, 0xed, 0xa7, 0x09, 0xd9, 0x2f, 0x30, 0xde, 0xe7, 0x3c};
+const uint8_t fingerprint[20] = {0x09, 0x1e, 0x68, 0x9f, 0xbd, 0x40, 0x4b, 0x47, 0x8d, 0xac, 0xbe, 0xfe, 0xef, 0x35, 0xd6, 0x52, 0xc1, 0xa0, 0xec, 0x9f};
 //9a 87 9b 82 e9 19 7e 63 8a db 67 ed a7 09 d9 2f 30 de e7 3c
 //-----------------------------------------
 #define WIFI_SSID "ENTER_YOUR_WIFI_SSID"
