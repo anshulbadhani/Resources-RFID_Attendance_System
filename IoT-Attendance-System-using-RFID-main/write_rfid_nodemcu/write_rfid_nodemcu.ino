@@ -1,8 +1,8 @@
 #include <SPI.h>
 #include <MFRC522.h>
 //-----------------------------------------
-constexpr uint8_t RST_PIN = 0;
-constexpr uint8_t SS_PIN = 2;
+constexpr uint8_t RST_PIN = D3;
+constexpr uint8_t SS_PIN = D4;
 //-----------------------------------------
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 MFRC522::MIFARE_Key key;        
@@ -11,7 +11,7 @@ MFRC522::MIFARE_Key key;
 int blockNum = 2;  
 /* This is the actual data which is 
 going to be written into the card */
-byte blockData [16] = {"CHAD"};
+byte blockData [16] = {"Ahmad_Logs"};
 //-----------------------------------------
 /* Create array to read data from Block */
 /* Length of buffer should be 2 Bytes 
