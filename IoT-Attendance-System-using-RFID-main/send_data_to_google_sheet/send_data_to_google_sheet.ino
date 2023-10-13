@@ -35,7 +35,7 @@ byte bufferLen = 18;
 byte readBlockData[18];
 
 String data2;
-const String data1 = "https://docs.google.com/spreadsheets/d/12qc8QZOm8NbEDrMEQO1MUCYIdAit89v0wR1OssLhlAg/exec?name=";
+const String data1 = "https://script.google.com/macros/s/AKfycby1iCVP5iPzEPZXHcmubB0CgehK1UR6JHjDcB8_DqKZq0rShpurz37NM8Xn0lF3_btKyw/exec?name=";
 
 void setup() 
 {
