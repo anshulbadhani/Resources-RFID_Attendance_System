@@ -22,11 +22,12 @@ byte bufferLen = 18;
 byte readBlockData[18];
 //-----------------------------------------
 String card_holder_name;
-const String sheet_url = "https://script.google.com/macros/s/AKfycby1iCVP5iPzEPZXHcmubB0CgehK1UR6JHjDcB8_DqKZq0rShpurz37NM8Xn0lF3_btKyw/exec?name=";
+const String sheet_url = "https://script.google.com/macros/s/AKfycbxJg9E5LheDTsIR6Cq-gWpRRBKWM_5kR-Y0EvZ1ApUnxlR_ELWhB1yKPbF41YKeVMP3/exec?name=";
 //-----------------------------------------
 // Fingerprint for demo URL, expires on ‎Monday, ‎May ‎2, ‎2022 7:20:58 AM, needs to be updated well before this date
-const uint8_t fingerprint[20] = {0x09, 0x1e, 0x68, 0x9f, 0xbd, 0x40, 0x4b, 0x47, 0x8d, 0xac, 0xbe, 0xfe, 0xef, 0x35, 0xd6, 0x52, 0xc1, 0xa0, 0xec, 0x9f};
+const uint8_t fingerprint[32] = {0xb2, 0x35, 0xf7, 0xc5, 0x69, 0x49, 0x0f, 0x2b, 0x2b, 0x86, 0x1d, 0x22, 0x37, 0xe3, 0x03, 0x33, 0x7f, 0xe4, 0x5a, 0x80, 0xff, 0xec, 0x55, 0xdc, 0x14, 0x0a, 0xbd, 0xa6, 0x9e, 0x84, 0x3d, 0x51};
 //9a 87 9b 82 e9 19 7e 63 8a db 67 ed a7 09 d9 2f 30 de e7 3c
+// b2 35 f7 c5 69 49 0f 2b 2b 86 1d 22 37 e3 03 33 7f e4 5a 80 ff ec 55 dc 14 0a bd a6 9e 84 3d 51
 //-----------------------------------------
 #define WIFI_SSID "ENTER_YOUR_WIFI_SSID"
 #define WIFI_PASSWORD "ENTER_YOUR_WIFI_PASSWORD"
